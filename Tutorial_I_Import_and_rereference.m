@@ -1,11 +1,11 @@
-%% FIRST PART OF THE ICN INVASIVE ELECTROPHYSIOLOGY TUTORIAL
+%% FIRST PART OF THE ICN INVASIVE ELECTROPHYSIOLOGY TUTORIAL 
 % This tutorial requires the following repositories: 
 % spm: https://github.com/spm/spm12
 % wjn_toolbox: https://github.com/neuromodulation/wjn_toolbox
 % Written February 8th 2021 by the ICN group @
 % https://github.com/neuromodulation/ 
 
-%% CLEAR ALL CLOSE ALL CLC
+%% CLEAR ALL CLOSE ALL CLC 
 clear all, close all, clc
 %% SET FOLDERS AND PATH
 % this is where you are going to work, choose any folder of your liking, we
@@ -224,7 +224,7 @@ disp(info.info)
 % 1985 at 1:35:23 pm, so this is nice to know, as we may want to store that
 % information in case we have more than one dataset from that subject.
 additional_info.recording_date = datetime(1985,12,16,13,35,23,100);
-% The reference is noted as channel STNL4. That is very important
+% The reference is noted as channel STNL3. That is very important
 % information for the preprocessing. Let's translate that into our
 % convention:
 additional_info.reference = 'LFP_3_R_STN_MT';
