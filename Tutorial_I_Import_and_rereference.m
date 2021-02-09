@@ -10,7 +10,7 @@ clear all, close all, clc
 %% SET FOLDERS AND PATH
 % this is where you are going to work, choose any folder of your liking, we
 % will create some files here:
-root = 'E:\OneDrive - CharitÈ - Universit‰tsmedizin Berlin\Data - Interventional Cognitive Neuromodulation\Tutorials\MATLAB_Electrophysiology_Import';
+root = 'E:\OneDrive - Charit√© - Universit√§tsmedizin Berlin\Data - Interventional Cognitive Neuromodulation\Tutorials\MATLAB_Electrophysiology_Import';
 % let's create the directory you specified as root and move there
 if ~exist(root,'dir')
     mkdir(root)
@@ -227,7 +227,7 @@ additional_info.recording_date = datetime(1985,12,16,13,35,23,100);
 % The reference is noted as channel STNL4. That is very important
 % information for the preprocessing. Let's translate that into our
 % convention:
-additional_info.reference = 'LFP_04_R_STN_MT';
+additional_info.reference = 'LFP_3_R_STN_MT';
 
 % also it is mentioned that it is a resting dataset 
 % and both medication and stimulation states are mentioned to be OFF.
