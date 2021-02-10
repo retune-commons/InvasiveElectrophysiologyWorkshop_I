@@ -3,14 +3,14 @@
 % spm: https://github.com/spm/spm12
 % wjn_toolbox: https://github.com/neuromodulation/wjn_toolbox
 % Written February 8th 2021 by the ICN group @
-% https://github.com/neuromodulation/ 
+% https://github.com/neuromodulation/ephys_tutorials 
 
 %% CLEAR ALL CLOSE ALL CLC 
 clear all, close all, clc
 %% SET FOLDERS AND PATH
 % this is where you are going to work, choose any folder of your liking, we
 % will create some files here:
-root = 'E:\OneDrive - CharitÃ© - UniversitÃ¤tsmedizin Berlin\Data - Interventional Cognitive Neuromodulation\Tutorials\MATLAB_Electrophysiology_Import';
+root = 'E:\OneDrive - Charite - Universitaetsmedizin Berlin\Data - Interventional Cognitive Neuromodulation\Tutorials\MATLAB_Electrophysiology_Import';
 % let's create the directory you specified as root and move there
 if ~exist(root,'dir')
     mkdir(root)
@@ -28,7 +28,7 @@ spm('defaults','eeg')
 clear all, close all, clc
 info.fs = 280;
 info.channels = {'STNR0','L_STNR1','LFP_R2_STN','STNR3','STNL0','STNL1','LFP_STN_L2','ECOG_SML_1','ECOG_SML_2','ECOG_L_SM_3','ECOGL_SM4','EEG_C3','EEG_Cz','FDI_R01EMG','FDIR_02'};
-info.info = 'Some super valuable invasive resting datasets that were not taken care off for a long time. The datset was recorded 1985/12/16, maybe like 13:35 h in the afternoon or something. Medication and stimulation were OFF. Sampling interval was 3.57 ms. 3389. Reference was STNL3.';
+info.info = 'Some super valuable invasive resting datasets that were not taken care off for a long time. The datset was recorded 1985/12/16 with TMSi SAGA, maybe like 13:35 h in the afternoon or something. 58 years old tremor dominant PD patient, her preop UPDRS was 32/12 OFF/ON, disease duraation like ~8 years,  Medication and stimulation were OFF. Sampling interval was 3.57 ms. 3389. Reference was STNL3.';
 writetable(struct2table(info),'trashy_info.txt')
 nsignals = length(info.channels);
 % Don't worry if you don't understand this paragraph, this is just to
@@ -312,15 +312,22 @@ D=wjn_add_channels(D.fullfile,derivative_data,derivative_chanlabels)
 % (aspm_sub-001_MedOff_StimOff_16-Dec-1985.mat) now including:
 D.nchannels
 D.chanlabels'
+
+% Now we can move forward, e.g. with filter and preprocessing: 
+Df=wjn_filter(D.fullfile,1,'high');
+Dff=wjn_filter(Df.fullfile,[48 52],'stop');Df.delete;
+D=wjn_filter(Dff.fullfile,98,'low');Dff.delete;
+
 % You can rename it using the spm move command:
 fname = D.fname;
-D=D.move(['reref_spm_' fname(6:end)]);
+D=D.move(['reref_spm_' fname(9:end)]);
 % Or you can swap that to fieldtrip:
-data = D.ftraw;
+
+data = wjn_raw_spm2fieldtrip(D.fullfile);
 % don't forget to take your info variable:
 data.info = D.info;
 fname = D.fname;
-save(['reref_fieldtrip_' fname(6:end)])
+save(['reref_fieldtrip_' fname(7:end)])
 
 %% DONE! This is where I would start my data analysis with this dataset:
 clear all, close all, clc
@@ -348,3 +355,60 @@ ylabel('Frequency [Hz]')
 zlabel('PSD')
 figone(25,20)
 %% CONVERSION TO BIDS
+% Now as part of the INF team, I will also take the opportunity to promote
+% the use of the bids standard and demonstrate how simple it can be.
+% For that we need some additional code from the original fieldtrip toolbox
+clear all, close all, clc
+load('fieldtrip_sub-001_MedOff_StimOff_16-Dec-1985')
+addpath C:\code\fieldtrip\  
+
+%
+cfg = [];
+cfg.method    = 'convert';
+cfg.datatype  = 'ieeg';
+cfg.bidsroot  = 'bids';
+cfg.sub       = '001';
+
+% Info to build your participants table using some of the info provided:
+disp(data.info.source_info)
+
+cfg.participants.age = 58;
+cfg.participants.sex = 'f';
+cfg.participants.updrsoff = 32;
+cfg.participants.updrson = 12;
+cfg.participants.updrstiming = 'preop';
+cfg.participants.clinsubtype = 'tremor dominant';
+cfg.participants.electrodetype = 'Medtronic 3389';
+cfg.participants.hardwareamp = 'TMSi SAGA';
+
+% specify the information for the scans.tsv file
+% this is optional, you can also pass other pieces of info
+cfg.scans.acq_time = char(datetime(data.info.recording_date,'Format','defaultdate')) ;
+
+% specify some general information that will be added to the eeg.json file
+cfg.InstitutionName             = 'Charité - Universitaetsmedizin Berlin';
+cfg.InstitutionalDepartmentName = 'Sektion für Bewegungsstörungen und Neuromodulation';
+cfg.InstitutionAddress          = 'Chariteplatz 1, 10117 Berlin';
+cfg.dataset_description.Authors  = 'Gerd-Helge Schneider, Wolf-Julian Neumann, Andrea A. Kühn';
+% provide the mnemonic and long description of the task
+cfg.TaskName        = 'RestMedOff';
+cfg.TaskDescription = 'Subjects were asked not to move and remain eyes open after withdrawal of medication.';
+
+% these are iEEG specific
+cfg.ieeg.PowerLineFrequency = 50;   % since recorded in the Europe
+cfg.ieeg.iEEGReference       = 'LFP_L_3_STN_MT'; % as stated in info
+cfg.ieeg.SEEGChannelCount = numel(ci('SEEG',data.hdr.chantype));
+cfg.ieeg.ECOGChannelCount = numel(ci('ECOG',data.hdr.chantype));
+cfg.ieeg.SoftwareFilters  = 'High-pass filter 1 Hz,  Stop-Band Filter 48-52 Hz, Low-pass filter 98 Hz,';
+cfg.ieeg.RecordingDuration  = [num2str(data.time{1}) ' sec'];
+cfg.ieeg.RecordingType = 'Continuous';
+cfg.ieeg.ElectrodeManufacturer     =  'Medtronic';
+cfg.ieeg.ElectrodeManufacturersModelName = '3389';
+data2bids(cfg,data);
+
+% Feel free to have a look at this beautiful bids dataset.
+
+
+
+
+
