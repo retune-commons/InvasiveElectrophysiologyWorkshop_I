@@ -374,22 +374,24 @@ disp(data.info.source_info)
 
 cfg.participants.age = 58;
 cfg.participants.sex = 'f';
-cfg.participants.updrsoff = 32;
-cfg.participants.updrson = 12;
-cfg.participants.updrstiming = 'preop';
-cfg.participants.clinsubtype = 'tremor dominant';
-cfg.participants.electrodetype = 'Medtronic 3389';
-cfg.participants.hardwareamp = 'TMSi SAGA';
+cfg.participants.updrs_off = 32;
+cfg.participants.updrs_on = 12;
+cfg.participants.disease_duration = 8;
+cfg.participants.updrs_timepoint = 'preoperative';
+cfg.participants.clinical_subtype = 'tremor dominant';
+cfg.participants.DBS_electrode_type = 'Medtronic 3389';
+cfg.participants.ECOG_electrode_type = 'AdTech 6 contact Narrow Body';
+cfg.participants.hardware_amplifier = 'TMSi SAGA';
 
 % specify the information for the scans.tsv file
 % this is optional, you can also pass other pieces of info
+% cfg.scans.acq_time = char(datetime(data.info.recording_date,'Format','defaultdate')) ;
 cfg.scans.acq_time = char(datetime(data.info.recording_date,'Format','defaultdate')) ;
-
 % specify some general information that will be added to the eeg.json file
-cfg.InstitutionName             = 'Charité - Universitaetsmedizin Berlin';
-cfg.InstitutionalDepartmentName = 'Sektion für Bewegungsstörungen und Neuromodulation';
+cfg.InstitutionName             = 'Charite - Universitaetsmedizin Berlin';
+cfg.InstitutionalDepartmentName = 'Sektion fuer Bewegungsstoerungen und Neuromodulation';
 cfg.InstitutionAddress          = 'Chariteplatz 1, 10117 Berlin';
-cfg.dataset_description.Authors  = 'Gerd-Helge Schneider, Wolf-Julian Neumann, Andrea A. Kühn';
+cfg.dataset_description.Authors  = 'Gerd-Helge Schneider, Wolf-Julian Neumann, Andrea A. Kuehn';
 % provide the mnemonic and long description of the task
 cfg.TaskName        = 'RestMedOff';
 cfg.TaskDescription = 'Subjects were asked not to move and remain eyes open after withdrawal of medication.';
@@ -400,13 +402,13 @@ cfg.ieeg.iEEGReference       = 'LFP_L_3_STN_MT'; % as stated in info
 cfg.ieeg.SEEGChannelCount = numel(ci('SEEG',data.hdr.chantype));
 cfg.ieeg.ECOGChannelCount = numel(ci('ECOG',data.hdr.chantype));
 cfg.ieeg.SoftwareFilters  = 'High-pass filter 1 Hz,  Stop-Band Filter 48-52 Hz, Low-pass filter 98 Hz,';
-cfg.ieeg.RecordingDuration  = [num2str(data.time{1}) ' sec'];
+cfg.ieeg.RecordingDuration  = [num2str(data.time{1}(end)) ' sec'];
 cfg.ieeg.RecordingType = 'Continuous';
 cfg.ieeg.ElectrodeManufacturer     =  'Medtronic';
 cfg.ieeg.ElectrodeManufacturersModelName = '3389';
 data2bids(cfg,data);
 
-% Feel free to have a look at this beautiful bids dataset.
+% Feel free to have a look at this beautiful bids dataset in the suggested universally readable BrainVision format.
 
 
 

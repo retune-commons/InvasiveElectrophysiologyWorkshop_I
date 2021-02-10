@@ -322,10 +322,7 @@ D=wjn_filter(Dff.fullfile,98,'low');Dff.delete;
 fname = D.fname;
 D=D.move(['reref_spm_' fname(9:end)]);
 % Or you can swap that to fieldtrip:
-data = D.ftraw
-% Note that this fieldtrip dataset misses the data.hdr field, which is often not a problem. 
-% However, in case you do need it (e.g. for conversion to bids), you may
-% want to use this script:
+
 data = wjn_raw_spm2fieldtrip(D.fullfile);
 % don't forget to take your info variable:
 data.info = D.info;
@@ -334,7 +331,7 @@ save(['reref_fieldtrip_' fname(7:end)])
 
 %% DONE! This is where I would start my data analysis with this dataset:
 clear all, close all, clc
-D=spm_eeg_load('reref_fieldtrip_spm_sub-001_MedOff_StimOff_16-Dec-1985.mat');
+D=spm_eeg_load('reref_spm_sub-001_MedOff_StimOff_16-Dec-1985.mat');
 channel_of_interest=D.indchannel('LFP_01_R_STN_MT');
 Dtf=wjn_tf_wavelet(D.fullfile,1:100,20,channel_of_interest);
 
@@ -367,28 +364,23 @@ addpath C:\code\fieldtrip\
 
 %
 cfg = [];
-cfg.dataset = 'reref_fieldtrip_spm_sub-001_MedOff_StimOff_16-Dec-1985.mat'
-cfg.method    = 'copy';
+cfg.method    = 'convert';
 cfg.datatype  = 'ieeg';
 cfg.bidsroot  = 'bids';
-cfg.sub       = 'sub-001';
-
-load(cfg.dataset)
-disp(data.info.source_info)
+cfg.sub       = '001';
 
 % Info to build your participants table using some of the info provided:
-
-load(cfg.dataset)
 disp(data.info.source_info)
 
 cfg.participants.age = 58;
 cfg.participants.sex = 'f';
-cfg.participants.updrsoff = 32;
-cfg.participants.updrson = 12;
-cfg.participants.updrstiming = 'preop';
-cfg.participants.clinsubtype = 'tremor dominant';
-cfg.participants.electrodetype = 'Medtronic 3389';
-cfg.participants.hardwareamp = 'TMSi SAGA';
+cfg.participants.updrs_off = 32;
+cfg.participants.updrs_on = 12;
+cfg.participants.disease_duration = 8;
+cfg.participants.updrs_timepoint = 'preoperative';
+cfg.participants.clinical_subtype = 'tremor dominant';
+cfg.participants.DBS_electrode_type = 'Medtronic 3389';
+cfg.participants.hardware_amp = 'TMSi SAGA';
 
 % specify the information for the scans.tsv file
 % this is optional, you can also pass other pieces of info
@@ -408,16 +400,16 @@ cfg.ieeg.PowerLineFrequency = 50;   % since recorded in the Europe
 cfg.ieeg.iEEGReference       = 'LFP_L_3_STN_MT'; % as stated in info
 cfg.ieeg.SEEGChannelCount = numel(ci('SEEG',data.hdr.chantype));
 cfg.ieeg.ECOGChannelCount = numel(ci('ECOG',data.hdr.chantype));
-cfg.ieeg.SoftwareFilters  = 'High-pass filter 1 Hz, Low-pass filter 98 Hz, Stop-Band Filter 48-52 Hz';
-cfg.ieeg.RecordingDuration  = [num2str(D.time(end)) ' sec'];
+cfg.ieeg.SoftwareFilters  = 'High-pass filter 1 Hz,  Stop-Band Filter 48-52 Hz, Low-pass filter 98 Hz,';
+cfg.ieeg.RecordingDuration  = [num2str(data.time{1}) ' sec'];
 cfg.ieeg.RecordingType = 'Continuous';
-cfg.ieeg.ElectrodeManufacturer     =  'Medt';
-cfg.ieeg.ElectrodeManufacturersModelName = 'Boston Scientific Vercise - 8 circular contacts';
-   
-data2bids_rox(cfg,data);
-end
+cfg.ieeg.ElectrodeManufacturer     =  'Medtronic';
+cfg.ieeg.ElectrodeManufacturersModelName = '3389';
+data2bids(cfg,data);
 
-end
+% Feel free to have a look at this beautiful bids dataset.
 
-data2bids
+
+
+
 
