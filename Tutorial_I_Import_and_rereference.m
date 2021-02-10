@@ -338,22 +338,14 @@ Dtf=wjn_tf_wavelet(D.fullfile,1:100,20,channel_of_interest);
 figure
 subplot(4,1,1)
 wjn_plot_raw_signals(D.time,D(channel_of_interest,:),D.chanlabels(channel_of_interest))
-title('Raw data')
-subplot(4,1,2)
+title('Raw data');
+subplot(4,1,2);
 mypower(Dtf.frequencies,squeeze(Dtf(1,:,:,1)))
-ylabel('PSD')
-xlabel('Frequency [Hz]')
-title('Power spectrum')
+ylabel('PSD');xlabel('Frequency [Hz]');title('Power spectrum')
 subplot(4,1,[3 4])
 surface(Dtf.time,Dtf.frequencies,squeeze(log(Dtf(1,:,:,1))),'edgecolor','none')
-title('Time Frequency Analysis')
-view(-50,70)
-caxis([7 15])
-zlim([5 20])
-xlabel('Time [s]')
-ylabel('Frequency [Hz]')
-zlabel('PSD')
-figone(25,20)
+title('Time Frequency Analysis');view(-50,70);caxis([7 15]);zlim([5 20]);
+xlabel('Time [s]');ylabel('Frequency [Hz]');zlabel('PSD');figone(25,20)
 %% CONVERSION TO BIDS
 % Now as part of the INF team, I will also take the opportunity to promote
 % the use of the bids standard and demonstrate how simple it can be.
