@@ -381,6 +381,8 @@ figure
 wjn_plot_raw_signals(D.time,D(:,:),D.chanlabels)
 
 channel_of_interest=D.indchannel('LFP_R_01_STN_MT');
+
+% skip this if you don't have the signal processing toolbox
 Dtf=wjn_tf_wavelet(D.fullfile,1:100,20,channel_of_interest);
 
 figure
@@ -394,7 +396,7 @@ subplot(4,1,[3 4])
 surface(Dtf.time,Dtf.frequencies,squeeze(log(Dtf(1,:,:,1))),'edgecolor','none')
 title('Time Frequency Analysis');view(-50,70);caxis([7 15]);zlim([5 20]);
 xlabel('Time [s]');ylabel('Frequency [Hz]');zlabel('PSD');figone(25,20)
-%% CONVERSION TO BIDS
+%% CONVERSION TO BIDS (skip this if you did not want to download fieldtrip)
 % Now as part of the INF team, I will also take the opportunity to promote
 % the use of the BIDS standard (https://bids-specification.readthedocs.io/en/stable/)
 % and demonstrate how simple it can be.
