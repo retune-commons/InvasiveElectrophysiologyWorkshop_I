@@ -1,0 +1,31 @@
+Brain Vision Data Exchange Header File Version 1.0
+; Data created by FieldTrip
+
+[Common Infos]
+DataFile=sub-001_ses-MedOff_task-Rest_ieeg.eeg
+MarkerFile=sub-001_ses-MedOff_task-Rest_ieeg.vmrk
+DataFormat=BINARY
+DataOrientation=MULTIPLEXED
+NumberOfChannels=16
+SamplingInterval=3.571429e+03
+
+[Binary Infos]
+BinaryFormat=IEEE_FLOAT_32
+
+[Channel Infos]
+Ch1=LFP_0_R_STN_MT,,1
+Ch2=LFP_1_R_STN_MT,,1
+Ch3=LFP_2_R_STN_MT,,1
+Ch4=LFP_3_R_STN_MT,,1
+Ch5=LFP_0_L_STN_MT,,1
+Ch6=LFP_1_L_STN_MT,,1
+Ch7=LFP_2_L_STN_MT,,1
+Ch8=LFP_3_L_STN_MT,,1
+Ch9=ECOG_1_U_SM_U,,1
+Ch10=ECOG_2_U_SM_U,,1
+Ch11=ECOG_3_L_SM_U,,1
+Ch12=ECOG_4_L_SM_U,,1
+Ch13=EEG_L_C3_U,,1
+Ch14=EEG_C_Cz_U,,1
+Ch15=EMG_1_R_FDI_U,,1
+Ch16=EMG_2_R_FDI_U,,1

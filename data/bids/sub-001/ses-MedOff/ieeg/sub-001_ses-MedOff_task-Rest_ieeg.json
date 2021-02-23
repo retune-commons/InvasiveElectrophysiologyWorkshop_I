@@ -1,0 +1,23 @@
+{
+	"ECGChannelCount": 0,
+	"ECOGChannelCount": 4,
+	"EEGChannelCount": 2,
+	"EMGChannelCount": 2,
+	"EOGChannelCount": 0,
+	"ElectrodeManufacturer": "Medtronic",
+	"ElectrodeManufacturersModelName": "3389",
+	"InstitutionAddress": "Chariteplatz 1, 10117 Berlin",
+	"InstitutionName": "Charite - Universitaetsmedizin Berlin",
+	"InstitutionalDepartmentName": "Sektion fuer Bewegungsstoerungen und Neuromodulation",
+	"MiscChannelCount": 0,
+	"PowerLineFrequency": 50,
+	"RecordingDuration": "60 sec",
+	"RecordingType": "Continuous",
+	"SEEGChannelCount": 8,
+	"SamplingFrequency": 280,
+	"SoftwareFilters": "High-pass filter 1 Hz,  Stop-Band Filter 48-52 Hz, Low-pass filter 98 Hz,",
+	"TaskDescription": "Subjects were asked not to move and remain eyes open. Recording was performeds after withdrawal of medication.",
+	"TaskName": "Rest",
+	"TriggerChannelCount": 0,
+	"iEEGReference": "LFP_L_3_STN_MT"
+}

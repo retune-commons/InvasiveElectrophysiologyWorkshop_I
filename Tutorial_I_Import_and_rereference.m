@@ -13,17 +13,18 @@ clear all, close all, clc
 %% SET FOLDERS AND PATH
 % this is where you are going to work, choose any folder of your liking, we
 % will create some files here:
-root = 'E:\OneDrive - Charite - Universitaetsmedizin Berlin\Data - Interventional Cognitive Neuromodulation\Tutorials\MATLAB_Electrophysiology_Import';
+root = 'G:\EphysTutorial'; % This needs to be adapted!
 % let's create the directory you specified as root and move there
 if ~exist(root,'dir')
     mkdir(root)
 end
+
 cd(root) 
 
 % Now add the required code to your path this is where your code 
 % repositories for wjn_toolbox and SPM are.
-addpath(fullfile('C:\code\','wjn_toolbox'))
-addpath(fullfile('C:\code\','spm12')) 
+addpath('G:\EphysTutorial\code\wjn_toolbox') % This needs to be adapted
+addpath('G:\EphysTutorial\code\spm12') % This needs to be adapted
 % SPM needs to be initialized to include FieldTrip folders in path:
 % Do not initialize FieldTrip yet, as MatLab will get confused!
 spm('defaults','eeg')
@@ -35,7 +36,7 @@ spm('defaults','eeg')
 % Clean slate first:
 clear all, close all, clc
 info.fs = 280;
-info.channels = {'STNR0','L_STNR1','LFP_R2_STN','STNR3','STNL0','STNL1','LFP_STN_L2','ECOG_SML_1','ECOG_SML_2','ECOG_L_SM_3','ECOGL_SM4','EEG_C3','EEG_Cz','FDI_R01EMG','FDIR_02'};
+info.channels = {'STNR0','L_STNR1','LFP_R2_STN','STNR3','STNL0','STNL1','LFP_STN_L2','STNL3','ECOG_SML_1','ECOG_SML_2','ECOG_L_SM_3','ECOGL_SM4','EEG_C3','EEG_Cz','FDI_R01EMG','FDIR_02'};
 info.info = 'Some super valuable invasive resting datasets that were not taken care off for a long time. The datset was recorded 1985/12/16 with TMSi SAGA, maybe like 13:35 h in the afternoon or something. 58 years old tremor dominant PD patient, her preop UPDRS was 32/12 OFF/ON, disease duraation like ~8 years,  Medication and stimulation were OFF. Sampling interval was 3.57 ms. 3389. Reference was STNL3.';
 writetable(struct2table(info),'trashy_info.txt')
 nsignals = length(info.channels);
@@ -57,10 +58,13 @@ for a = 1:nsignals
         cfg.noise.ampl = randi(50);
     data = ft_freqsimulation(cfg);
     raw_signals(a,:) = data.trial{1}(1,:);
+    if a == 8 
+        raw_signals(a,:) = rand(1,size(raw_signals,2));
+    end
 end
 
 
-% so 8 raw data time-series are now stored in 
+% so 16 raw data time-series are now stored in 
 writetable(array2table(raw_signals'),'forgotten_trashy_dataset.csv')
 
 % You can now see two files written to this folder, a csv and a text file.
@@ -74,6 +78,7 @@ clear all, close all, clc
 
 % We need to find the three main information required for neurophysiology
 % analysis 1) raw data, 2) sampling rate and 3) channel names.
+
 % Additional very important information is the question of the reference 
 % used during recording, but this information can be lost at times. 
 
@@ -229,14 +234,14 @@ disp(chanlabels{1})
 % 5) have an additional identification of the manufacturer, which can in
 % our clinic sometimes be inferred from the number of LFP channels in the
 % set : MT (Medtronic). Medtronic is the only manufacturer left by whom 4
-% contact DBS electrodes would be implanted. So this was guessed correct. 
+% contact DBS electrodes would be implanted.
 % If you look closely at the info text, there is a 3389 hidden in there.
-% That is the traditional Medtronic DBS lead. 
+% That is the traditional Medtronic DBS lead. The script cannot know that but it is easy 
+% to replace the '_U' for unknown in the names with _MT for Medtronic.
+
+chanlabels(1:8) = strrep(chanlabels(1:8),'_U','_MT');
 
 
-% These things really depend on specific likelihoods or conventions, this
-% is just to demonstrate that scripts can help standardization of data
-% structures, such as channel naming.
 
 % What else is there in the info?
 disp(info.info)
@@ -248,7 +253,7 @@ additional_info.recording_date = datetime(1985,12,16,13,35,23,100);
 % The reference is noted as channel STNL3. That is very important
 % information for the preprocessing. Let's translate that into our
 % convention:
-additional_info.reference = 'LFP_3_L_STN_U';
+additional_info.reference = 'LFP_3_L_STN_MT';
 
 % also it is mentioned that it is a resting dataset 
 % and both medication and stimulation states are mentioned to be OFF.
@@ -275,13 +280,26 @@ D.info
 % defined parts:
 D
 disp(D)
+
 figure
 wjn_plot_raw_signals(D.time,D(:,:),D.chanlabels)
 
-% ok, this looks nice but what about the reference?
-% Before we would want to analyze the data, we should consider the
+% Ok, this looks nice but what about the reference?
+% If you look closely, channel 8 LFP_3_L_STN_MT seems to be empty. 
+% Now thinking about it, it was mentioned to be used as the reference. 
+% So likely this channel was not connected. At least it only carries noise. 
+
+figure
+wjn_plot_raw_signals(D.time,D([4 8],:),D.chanlabels([4 8]))
+
+
+% Thus, before we would want to analyze the data, we should consider the
 % reference used.
-% All data were referenced to an LFP contact, so we should rereference
+
+
+% All data were referenced to an LFP contact. That means that all LFP channels are
+% contaminated by LFP signal from the reference contact. So we should rereference.
+%
 % Optimally, rereferencing is conducted to create local bipolar
 % derivatives. This should be the first preprocessing step that you do. It
 % requires some understanding of what is going on. Best is to start with 
@@ -290,15 +308,15 @@ wjn_plot_raw_signals(D.time,D(:,:),D.chanlabels)
 % Let's do that for the adjacent channels of the right LFP electrode.
 % We can use the help of the channel indicator here:
 index_lfpr = ci('R_STN',D.chanlabels);
-lfp_r_bp= D(index_lfpr(1:end-1),:)-D(index_lfpr(2:end),:);
+lfp_r_bp = D(index_lfpr(1:end-1),:)-D(index_lfpr(2:end),:);
 % we can write out the channel names by hand:
 channels_lfp_right = {'LFP_R_01_STN_MT','LFP_R_12_STN_MT','LFP_R_23_STN_MT'};
 % now we have three channels from adjacent contact pairs 
 % For the right side it is a little more complicated. The reference was
 D.info.reference
 index_lfpl = ci('L_STN',D.chanlabels);
-% so that means LFP_03_L_STN_MT is already hardware bipolar:
-lfp_l_bp = [D(index_lfpl(1:end-1),:)-D(index_lfpl(2:end),:);D(index_lfpl(end),:)];
+% so that means LFP_03_L_STN_U is already hardware bipolar:
+lfp_l_bp = [D(index_lfpl(1:2),:)-D(index_lfpl(2:3),:);D(index_lfpl(3),:)];
 channels_lfp_left = {'LFP_L_01_STN_MT','LFP_L_12_STN_MT','LFP_L_23_STN_MT'};
 
 % Next, we will rereference ECOG channels. ECOG is probably least affected 
@@ -336,6 +354,10 @@ D=wjn_add_channels(D.fullfile,derivative_data,derivative_chanlabels)
 D.nchannels
 D.chanlabels'
 
+% Finally we can remove the empty and noisy monopolar STNL3 channel. 
+
+D=wjn_remove_channels(D.fullfile, {'LFP_3_L_STN_MT'   });
+
 % Now we can move forward, e.g. with filtering and preprocessing: 
 Df=wjn_filter(D.fullfile,1,'high');
 Dff=wjn_filter(Df.fullfile,[48 52],'stop');Df.delete;
@@ -343,7 +365,7 @@ D=wjn_filter(Dff.fullfile,98,'low');Dff.delete;
 
 % You can rename it using the spm 'move' command:
 fname = D.fname;
-D=D.move(['reref_spm_' fname(9:end)]);
+D=D.move(['reref_spm_' fname(10:end)]);
 % Or you can swap that to fieldtrip:
 data = wjn_raw_spm2fieldtrip(D.fullfile);
 % don't forget to take your info variable:
@@ -354,7 +376,11 @@ save(['reref_fieldtrip_' fname(7:end)])
 %% DONE! This is where I would start my data analysis with this dataset:
 clear all, close all, clc
 D=spm_eeg_load('reref_spm_sub-001_MedOff_StimOff_16-Dec-1985.mat');
-channel_of_interest=D.indchannel('LFP_01_R_STN_MT');
+
+figure
+wjn_plot_raw_signals(D.time,D(:,:),D.chanlabels)
+
+channel_of_interest=D.indchannel('LFP_R_01_STN_MT');
 Dtf=wjn_tf_wavelet(D.fullfile,1:100,20,channel_of_interest);
 
 figure
@@ -375,7 +401,7 @@ xlabel('Time [s]');ylabel('Frequency [Hz]');zlabel('PSD');figone(25,20)
 % For that we need some additional code from the original FieldTrip toolbox
 clear all, close all, clc
 load('fieldtrip_sub-001_MedOff_StimOff_16-Dec-1985')
-addpath C:\code\fieldtrip\  
+addpath G:\EphysTutorial\code\fieldtrip % This needs to be adjusted!
 
 % let's define some general settings
 cfg = [];
@@ -402,7 +428,7 @@ cfg.participants.hardware_amplifier = 'TMSi SAGA';
 
 % specify the information for the scans.tsv file
 % This is optional, you can also pass other pieces of info
-cfg.scans.acq_time = char(datetime(data.info.recording_date,'Format','defaultdate'));
+cfg.scans.acq_time = char(data.info.recording_date);
 % specify some general information that will be added to the eeg.json file
 cfg.InstitutionName             = 'Charite - Universitaetsmedizin Berlin';
 cfg.InstitutionalDepartmentName = 'Sektion fuer Bewegungsstoerungen und Neuromodulation';

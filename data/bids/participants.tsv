@@ -1,0 +1,2 @@
+participant_id	age	sex	updrs_off	updrs_on	updrs_timepoint	disease_duration	clinical_subtype	DBS_electrode_type	ECOG_electrode_type	hardware_amplifier
+sub-001	58	f	32	12	preoperative	8	tremor dominant	Medtronic 3389	AdTech 6 contact Narrow Body	TMSi SAGA
