@@ -56,8 +56,6 @@ for a = 1:nsignals
     cfg.n2.bpfreq   = [randi(5)+20 randi(5)+30];
         cfg.noise.ampl = randi(50);
     data = ft_freqsimulation(cfg);
-    X = pinknoise(cfg.fsample*cfg.trllen)'
-    data.trial{1}(1,:) = data.trial{1}(1,:) + X
     raw_signals(a,:) = data.trial{1}(1,:);
 end
 
