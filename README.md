@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-# ephys_tutorials
-=======
 # ephys_tutorials
 
 Ephys tutorial 1 show on an entry-level how ECOG and LFP data are organized. Topics covered are:
@@ -16,4 +13,3 @@ Ephys tutorial 1 show on an entry-level how ECOG and LFP data are organized. Top
 * explore the data in Python and use mne
 
 This tutorial is created by the Interventional and Cognitive Neuromodulation Lab: https://www.icneuromodulation.org/
->>>>>>> Stashed changes
