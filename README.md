@@ -1,4 +1,4 @@
-# ephys_tutorials
+# ICN electrophysiology tutorial 1
 
 ### what you will learn:
 Ephys tutorial 1 show on an entry-level how ECOG and LFP data are organized. Topics covered are:
@@ -9,8 +9,8 @@ Ephys tutorial 1 show on an entry-level how ECOG and LFP data are organized. Top
 * interpret some information (Stimulation state, medication state, stimulator model) and where to store these
 * rewrite channel names
 * how to do rereferencing of the signal
-* save your data in Matlab, FieldTrip or SPM readable data
-* convert your data to BIDS format (brainvision files)
+* save your data in Matlab, FieldTrip or SPM readable format
+* convert your data to BIDS format (brainvision)
 * explore the data in Python and use mne
 
 ### what you need:
@@ -23,11 +23,13 @@ FieldTrip: https://github.com/fieldtrip/fieldtrip.git
 MatLab Signal Processing Toolbox
 
 #### Python
-For the second part, you need jupyter notebook as we end with this script https://github.com/neuromodulation/ephys_tutorials/blob/main/Tutorial_1_import_and_rereferences.ipynb
+For the second part, you need jupyter notebook as we end the tutorial with this script https://github.com/neuromodulation/ephys_tutorials/blob/main/Tutorial_1_import_and_rereferences.ipynb
+the dependencies are:
 mne tools https://mne.tools/stable/index.html, that can be installed using following command:
 ```python
 import sys
 !{sys.executable} -m pip  install mne
 ```
 
+We welcome your feedback on this tutorial.
 This tutorial is created by the Interventional and Cognitive Neuromodulation Lab: https://www.icneuromodulation.org/
