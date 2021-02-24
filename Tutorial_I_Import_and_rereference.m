@@ -412,7 +412,8 @@ cfg.datatype  = 'ieeg';
 cfg.bidsroot  = 'bids';
 cfg.sub       = '001'; % subject identifier
 cfg.task      = 'Rest';
-cfg.ses       = 'MedOff';
+cfg.ses       = 'EphysMedOff';
+cfg.acq       = 'StimOff';
 
 % Info to build your participants table using some of the info provided:
 disp(data.info.source_info)
