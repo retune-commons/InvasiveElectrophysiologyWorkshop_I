@@ -3,8 +3,7 @@
 % spm: https://github.com/spm/spm12
 % wjn_toolbox: https://github.com/neuromodulation/wjn_toolbox
 % FieldTrip: https://github.com/fieldtrip/fieldtrip.git
-% Additionally, you will need to install the MatLab SignalProcessing
-% Toolbox
+% Additionally, you will need to install the MatLab Signal Processing Toolbox
 % Written February 8th 2021 by the ICN group @
 % https://github.com/neuromodulation/ephys_tutorials 
 
@@ -55,7 +54,7 @@ for a = 1:nsignals
     cfg.n1.bpfreq   = [randi(3)+12 randi(5)+15];
     cfg.n2.ampl     = 50+randi(50);
     cfg.n2.bpfreq   = [randi(5)+20 randi(5)+30];
-        cfg.noise.ampl = randi(50);
+    cfg.noise.ampl = randi(50);
     data = ft_freqsimulation(cfg);
     raw_signals(a,:) = data.trial{1}(1,:);
     if a == 8 
@@ -110,9 +109,15 @@ false_sampling_rate2 = 50;
 wjn_plot_raw_signals(false_sampling_rate2,rawdata)
 title(['Sampling rate: ' num2str(false_sampling_rate2)])
 
-% So let's find the real sampling rate in the info file.
+%Conclusion: having a false sampling rate can affect the x-axis (time axis) enormously,
+% so therefore it is important to visually check your data
+% note: the y-axis or voltage axis is in this example less important,
+% because the absolute voltage is very dependend on the impedances of the
+% stimulator for every patient used, and therefore we usually do not need to worry about the absolute voltage.
+
+%% So let's find the real sampling rate in the info file.
 % Typical abbreviations for sampling rate (also called sampling frequency
-% are), fs, fsample, samplingrate,sr.
+% are), fs, fsample, samplingrate, sr.
 % Sometime the sampling interval is stated. This is the amount of time
 % between two samples. 
 
@@ -164,7 +169,7 @@ additional_info = info.info;
 % Converting to FieldTrip is the easiest possible step
 % You just need to write this data structure from the info you have
 % Note that data have to be in correct dimensions:
-% Number_of_channels x Number_of_samples
+% Number_of_channels x Number_of_samples (which means rows x columns)
 % Therefore we will have to transpose our data using the ' function
 % It can be useful to convert single precision data to double and it
 % doesn't hurt if its double already:
@@ -271,8 +276,9 @@ filename = [additional_info.subject '_' additional_info.medication '_' ...
     additional_info.stimulation '_' char(datetime(additional_info.recording_date,'Format','dd-MMM-yyyy')) '.mat'];
 D=wjn_import_rawdata(['spm_' filename],rawdata,chanlabels,fsample,'spm',additional_info);
 data=wjn_import_rawdata(['fieldtrip_' filename],rawdata,chanlabels,fsample,'fieldtrip',additional_info);
+
 %% Now we have a neat datafile in both SPM and FieldTrip format for further analyis.
-clear all, close all,clc
+clear all, close all, clc
 D=spm_eeg_load('spm_sub-001_MedOff_StimOff_16-Dec-1985.mat')
 % all the info we gathered can be found in 
 D.info
@@ -309,15 +315,23 @@ wjn_plot_raw_signals(D.time,D([4 8],:),D.chanlabels([4 8]))
 % We can use the help of the channel indicator here:
 index_lfpr = ci('R_STN',D.chanlabels);
 lfp_r_bp = D(index_lfpr(1:end-1),:)-D(index_lfpr(2:end),:);
+% note: this is basically just a substraction of one signal with the other.
+% If you would have swapped the substraction, that would only invert the
+% sign of the rereferenced signals, and that is usually not a problem.
+
 % we can write out the channel names by hand:
 channels_lfp_right = {'LFP_R_01_STN_MT','LFP_R_12_STN_MT','LFP_R_23_STN_MT'};
+% because we substracted channel 0-1, channel 1-2 and channel 2-3 in this case.
+
 % now we have three channels from adjacent contact pairs 
 % For the right side it is a little more complicated. The reference was
 D.info.reference
 index_lfpl = ci('L_STN',D.chanlabels);
-% so that means LFP_03_L_STN_U is already hardware bipolar:
+% so that means LFP_03_L_STN_MT is already hardware bipolar:
 lfp_l_bp = [D(index_lfpl(1:2),:)-D(index_lfpl(2:3),:);D(index_lfpl(3),:)];
 channels_lfp_left = {'LFP_L_01_STN_MT','LFP_L_12_STN_MT','LFP_L_23_STN_MT'};
+% note: this means LFP_03_L_STN_MT equals LFP_L_23_STN_MT, so no substraction
+% was needed for this channel to become the referenced signal.
 
 % Next, we will rereference ECOG channels. ECOG is probably least affected 
 % because of the high amplitude signals. Nevertheless, we can improve the 
@@ -348,7 +362,7 @@ channels_emg = {'EMG_12_R_FDI_U'};
 % new one:
 derivative_data = [lfp_r_bp;lfp_l_bp;ecog_car;ecog_bp;eeg_bp;emg_bp];
 derivative_chanlabels = [channels_lfp_right,channels_lfp_left,channels_ecog_car,channels_ecog_bp,channels_eeg,channels_emg];
-D=wjn_add_channels(D.fullfile,derivative_data,derivative_chanlabels)
+D = wjn_add_channels(D.fullfile,derivative_data,derivative_chanlabels)
 % The above function has created a new SPM file
 % 'aspm_sub-001_MedOff_StimOff_16-Dec-1985.mat' now including:
 D.nchannels
