@@ -1,4 +1,6 @@
-# ICN electrophysiology tutorial 1
+# ReTune Invasive Electrophysiology Tutorial I 
+
+Provided by projects B03, C01 and INF
 
 ### what you will learn:
 Ephys tutorial 1 show on an entry-level how ECOG and LFP data are organized. Topics covered are:
