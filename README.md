@@ -18,15 +18,17 @@ Ephys tutorial 1 shows on an entry-level how ECOG and LFP data are organized. To
 ### what you need:
 #### MATLAB
 For the first part, you will need Matlab2020b as we start with this script https://github.com/retune-commons/InvasiveElectrophysiologyWorkshop_I/blob/main/Tutorial_I_Import_and_rereference.m
-the dependencies are:
+
+The dependencies are:
 * spm: https://github.com/spm/spm12
 * wjn_toolbox: https://github.com/neuromodulation/wjn_toolbox
 * FieldTrip: https://github.com/fieldtrip/fieldtrip.git
 * MatLab Signal Processing Toolbox
 
 #### Python
-For the second part, you need jupyter notebook as we end the tutorial with this script https://github.com/retune-commons/InvasiveElectrophysiologyWorkshop_I/blob/main/Tutorial_1_import_and_rereferences.ipynb
-the dependencies are:
+For the second part, you need jupyter notebook as we end the tutorial with this script https://github.com/retune-commons/InvasiveElectrophysiologyWorkshop_I/blob/main/Tutorial_1_import_and_rereferences.ipynbT
+
+The dependencies are:
 * mne tools https://mne.tools/stable/index.html, that can be installed using following command:
 ```python
 import sys
