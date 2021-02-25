@@ -5,7 +5,7 @@
 % FieldTrip: https://github.com/fieldtrip/fieldtrip.git
 % Additionally, you will need to install the MatLab Signal Processing Toolbox
 % Written February 8th 2021 by the ICN group @
-% https://github.com/neuromodulation/ephys_tutorials 
+% https://github.com/retune-commons/InvasiveElectrophysiologyWorkshop_I
 
 %% CLEAR ALL CLOSE ALL CLC 
 clear all, close all, clc
