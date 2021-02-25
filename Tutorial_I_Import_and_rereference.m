@@ -101,15 +101,15 @@ figure
 subplot(1,2,1)
 % E.g. if sampling rate was believed to be 2 kHz...
 false_sampling_rate1 = 2000;
-wjn_plot_raw_signals(2000,rawdata)
+wjn_plot_raw_signals(2000,rawdata);
 title(['Sampling rate: ' num2str(false_sampling_rate1)])
 subplot(1,2,2)
 % ... this is different when compared to 50 Hz
 false_sampling_rate2 = 50;
-wjn_plot_raw_signals(false_sampling_rate2,rawdata)
+wjn_plot_raw_signals(false_sampling_rate2,rawdata);
 title(['Sampling rate: ' num2str(false_sampling_rate2)])
 
-%Conclusion: having a false sampling rate can affect the x-axis (time axis) enormously,
+% Conclusion: having a false sampling rate can affect the x-axis (time axis) enormously,
 % so therefore it is important to visually check your data
 % note: the y-axis or voltage axis is in this example less important,
 % because the absolute voltage is very dependend on the impedances of the
@@ -135,7 +135,7 @@ disp(info.info)
 % 1000/3.57 = 280.112 Hz, which is close but not 100% accurate.
 
 figure
-wjn_plot_raw_signals(fsample,rawdata)
+wjn_plot_raw_signals(fsample,rawdata);
 xlabel('Time [s]')
 title({['Sampling rate: ' num2str(fsample)],'Original recording time was one minute.'})
 
@@ -150,7 +150,7 @@ channel_names = table2cell(info(:,channel_indices)); % note that we are converti
 
 % So we can look at the data now with the most important aspects in place
 figure
-wjn_plot_raw_signals(fsample,rawdata,channel_names)
+wjn_plot_raw_signals(fsample,rawdata,channel_names);
 
 % Let's also extract that text info field from the table:
 additional_info = info.info;
@@ -327,10 +327,10 @@ channels_lfp_right = {'LFP_R_01_STN_MT','LFP_R_12_STN_MT','LFP_R_23_STN_MT'};
 % For the right side it is a little more complicated. The reference was
 D.info.reference
 index_lfpl = ci('L_STN',D.chanlabels);
-% so that means LFP_03_L_STN_MT is already hardware bipolar:
+% so that means LFP_3_L_STN_MT is already hardware bipolar:
 lfp_l_bp = [D(index_lfpl(1:2),:)-D(index_lfpl(2:3),:);D(index_lfpl(3),:)];
 channels_lfp_left = {'LFP_L_01_STN_MT','LFP_L_12_STN_MT','LFP_L_23_STN_MT'};
-% note: this means LFP_03_L_STN_MT equals LFP_L_23_STN_MT, so no substraction
+% note: this means LFP_3_L_STN_MT equals LFP_L_23_STN_MT, so no substraction
 % was needed for this channel to become the referenced signal.
 
 % Next, we will rereference ECOG channels. ECOG is probably least affected 
@@ -392,7 +392,7 @@ clear all, close all, clc
 D=spm_eeg_load('reref_spm_sub-001_MedOff_StimOff_16-Dec-1985.mat');
 
 figure
-wjn_plot_raw_signals(D.time,D(:,:),D.chanlabels)
+wjn_plot_raw_signals(D.time,D(:,:),D.chanlabels);
 
 channel_of_interest=D.indchannel('LFP_R_01_STN_MT');
 
@@ -401,7 +401,7 @@ Dtf=wjn_tf_wavelet(D.fullfile,1:100,20,channel_of_interest);
 
 figure
 subplot(4,1,1)
-wjn_plot_raw_signals(D.time,D(channel_of_interest,:),D.chanlabels(channel_of_interest))
+wjn_plot_raw_signals(D.time,D(channel_of_interest,:),D.chanlabels(channel_of_interest));
 title('Raw data');
 subplot(4,1,2);
 mypower(Dtf.frequencies,squeeze(Dtf(1,:,:,1)))
